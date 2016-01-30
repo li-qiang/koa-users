@@ -1,0 +1,28 @@
+{
+  "name": "koa-users",
+  "version": "1.0.0",
+  "description": "Manage users.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/li-qiang/koa-users.git"
+  },
+  "keywords": [
+    "users"
+  ],
+  "author": "li-qiang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/li-qiang/koa-users/issues"
+  },
+  "homepage": "https://github.com/li-qiang/koa-users#readme",
+  "dependencies": {
+    "koa-router": "^5.3.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0"
+  }
+}
