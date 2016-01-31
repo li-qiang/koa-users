@@ -9,8 +9,17 @@ before_install:
 install:
   - npm install
 
+before_script:
+  - "mysql -e 'create database koaServer; select version();'"
+
+mysql:
+  adapter: mysql
+  username: root
+  password: 123qwe
+  encoding: utf8
+  database: koaServer
 
 cache:
   directories:
-  - node_modules
-  - /home/travis/.npm
+    - node_modules
+    - /home/travis/.npm
