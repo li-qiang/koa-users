@@ -10,12 +10,11 @@ install:
   - npm install
 
 before_script:
-  - "mysql -e 'create database koaServer; select version();'"
+  - "mysql -e 'create database koaServer;'"
 
 mysql:
   adapter: mysql
   username: root
-  password: 123qwe
   encoding: utf8
   database: koaServer
 
