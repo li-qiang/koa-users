@@ -9,8 +9,8 @@ before_install:
 install:
   - npm install
 
-
 cache:
   directories:
-  - node_modules
-  - /home/travis/.npm
+    - node_modules
+    - /home/travis/.npm
+    - /home/travis/.nvm

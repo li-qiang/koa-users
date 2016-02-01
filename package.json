@@ -4,6 +4,7 @@
   "description": "Manage users.",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "mocha"
   },
   "repository": {
@@ -20,9 +21,16 @@
   },
   "homepage": "https://github.com/li-qiang/koa-users#readme",
   "dependencies": {
-    "koa-router": "^5.3.0"
+    "koa": "^1.1.2",
+    "koa-body": "^1.4.0",
+    "koa-router": "^5.3.0",
+    "mysql": "^2.10.2",
+    "orm": "^2.1.30",
+    "q-orm": "0.0.3"
   },
   "devDependencies": {
-    "chai": "^3.5.0"
+    "chai": "^3.5.0",
+    "sqlite": "0.0.4",
+    "superagent": "^1.7.2"
   }
 }

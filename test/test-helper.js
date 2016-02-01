@@ -1,17 +1,16 @@
 'use strict';
 
-let fs = require('fs');
-let path = require('path');
+process.port = 4321;
+process.env.NODE_ENV = 'test';
 
+let startServer = require('../index');
 
-let loadFiles = (dir) => {
-  fs.readdirSync(dir)
-    .forEach((file) => {
-      let filePath = path.join(dir, file);
-      let isDirectory = fs.statSync(filePath).isDirectory();
-      if (isDirectory) return loadFiles(filePath)
-      if (/\.js$/.test(file)) require(filePath);
-    });
-}
+before((done) => {
+  startServer.then(() => done());
+});
 
-loadFiles(__dirname);
+let loadDir = require('./helpers/load-dir');
+
+loadDir(__dirname);
+
+module.exports.domain = `http://127.0.0.1:${process.port}`;
