@@ -1,6 +1,7 @@
 'use strict';
 
 process.port = 4321;
+process.env.NODE_ENV = 'test';
 
 let startServer = require('../index');
 

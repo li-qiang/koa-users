@@ -11,7 +11,14 @@ let host = 'localhost';
 let modelDir = path.join(__dirname, '..', 'models');
 
 let syncDBdefer = Promise.defer();
-let connection = qOrm.qConnect(`mysql://${username}:${password}@${host}/${database}`)
+let connection;
+
+if (process.env.NODE_ENV == 'test') {
+  let dbPath = path.join(__dirname, '..', 'test','test.db');
+  connection = qOrm.qConnect(`sqlite://${dbPath}`);
+} else {
+  connection = qOrm.qConnect(`mysql://${username}:${password}@${host}/${database}`)
+}
 
 let loadModel = (db, file) => {
   let defer = Promise.defer()
@@ -42,5 +49,7 @@ let loadAllModel = (db) => {
 }
 
 connection.then(loadAllModel);
+
+console.log(process.env.NODE_ENV);
 
 module.exports = syncDBdefer.promise;
