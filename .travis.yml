@@ -13,3 +13,4 @@ cache:
   directories:
     - node_modules
     - /home/travis/.npm
+    - /home/travis/.nvm
