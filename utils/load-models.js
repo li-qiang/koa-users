@@ -1,23 +1,20 @@
 'use strict'
 let fs = require('fs');
 let path = require('path');
-var orm = require("orm");
+let orm = require('orm');
 let qOrm = require('q-orm');
 
-let database = 'koaServer';
-let username = 'root';
-let password = '123qwe';
-let host = 'localhost';
 let modelDir = path.join(__dirname, '..', 'models');
-
 let syncDBdefer = Promise.defer();
-let connection;
 
-if (process.env.NODE_ENV == 'test') {
-  let dbPath = path.join(__dirname, '..', 'test','test.db');
-  connection = qOrm.qConnect(`sqlite://${dbPath}`);
-} else {
-  connection = qOrm.qConnect(`mysql://${username}:${password}@${host}/${database}`)
+let getConnection = () => {
+  let testEnv = process.env.NODE_ENV == 'test';
+  if (testEnv) {
+    let dbPath = path.join(__dirname, '..', 'test', 'test.db');
+    return `sqlite://${dbPath}`;
+  }
+  let db = require('./config').database;
+  return `mysql://${db.username}:${db.password}@${db.host}/${db.database}`;
 }
 
 let loadModel = (db, file) => {
@@ -48,8 +45,6 @@ let loadAllModel = (db) => {
   return defer.promise;
 }
 
-connection.then(loadAllModel);
-
-console.log(process.env.NODE_ENV);
+qOrm.qConnect(getConnection()).then(loadAllModel);
 
 module.exports = syncDBdefer.promise;
