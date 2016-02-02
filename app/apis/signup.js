@@ -2,6 +2,7 @@
 
 let koaBody = require('koa-body')();
 let Errors = require('../../utils/error-codes');
+let is = require('../../utils/is');
 
 module.exports = {
   path: '/users',
@@ -10,9 +11,14 @@ module.exports = {
     koaBody,
     function* varifyUsername(next) {
       let user = this.request.body;
-      let nameOk = user && user.name && user.name.length > 0;
-      if (nameOk) return yield next;
+      if (user && is.present(user.name)) return yield next;
       this.sendErr(Errors.SignupNameBlank);
+    },
+
+    function* varifyUserPassword(next) {
+      let user = this.request.body;
+      if (user && is.present(user.password)) return yield next;
+      this.sendErr(Errors.SignupPasswordBlank);
     },
 
     function* coreateUser() {

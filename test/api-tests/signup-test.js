@@ -59,6 +59,12 @@ describe("Signup User", () => {
       expect(res.body.errCode).to.equal(Errors.SignupNameBlank);
     });
 
+    itShould('return error code 10001 when user name is null', function* () {
+      user.password = null;
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupPasswordBlank);
+    });
 
   });
 });
