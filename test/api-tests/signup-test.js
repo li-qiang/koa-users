@@ -52,7 +52,7 @@ describe("Signup User", () => {
       };
     });
 
-    itShould('return error code 10001 when user name is null', function* () {
+    itShould('return error code when user name is null', function* () {
       user.name = null;
       res = yield signupWith(user);
       expect(res.status).to.equal(401);
@@ -73,7 +73,7 @@ describe("Signup User", () => {
       expect(res.body.errCode).to.equal(Errors.SignupEmailError);
     });
 
-    itShould('return error code when user email is error', function* () {
+    itShould('return error code when user phone is error', function* () {
       user.phone = '11';
       res = yield signupWith(user);
       expect(res.status).to.equal(401);
