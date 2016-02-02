@@ -1,39 +1,26 @@
 'use strict'
 let expect = require("chai").expect;
-let Agent = require('superagent').agent;
-let agent = new Agent();
 let syncHelper = require('../helpers/sync-helper');
 let itShould = syncHelper.itShould;
 let beforeEachSync = syncHelper.beforeEachSync;
-let app = require('../test-helper');
+let signupWith = require('../helpers/user-helper').signupWith;
 let loadDB = require('../../utils/load-db');
 
 describe("Signup User", () => {
 
-  let signupWith = (data) => {
-    let defer = Promise.defer();
-    agent.post(`${app.domain}/users`)
-      .send(data)
-      .end((err, res) => {
-        expect(err).to.not.ok;
-        defer.resolve(res);
-      });
-    return defer.promise;
-  }
-
   describe("When post data is ok", () => {
-    let res, models, user = {
-      name: 'user',
-      password: 'password',
-      confirmPassword: 'password',
-      email: 'test@test.com',
-      phone: '12345678901'
-    };
-
+    let res, models, user;
     beforeEachSync(function* () {
+      user = {
+        name: 'user',
+        password: 'password',
+        confirmPassword: 'password',
+        email: 'test@test.com',
+        phone: '12345678901'
+      };
       res = yield signupWith(user);
-      let database = yield loadDB;
-      models = database.models;
+      let db = yield loadDB;
+      models = db.models;
     });
 
     itShould("response with a user when post data is ok", function* () {
@@ -47,7 +34,7 @@ describe("Signup User", () => {
         email: user.email
       });
       expect(foundUser.id).to.be.a('number');
-    })
+    });
 
   });
 });

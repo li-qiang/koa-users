@@ -2,28 +2,23 @@
 
 let fs = require('fs');
 let path = require('path');
+let Const = require('./test-const');
+process.port = Const.appPort;
+process.env.NODE_ENV = Const.env;
 
-process.port = 4321;
-process.env.NODE_ENV = 'test';
-
+let loadDir = require('./helpers/load-dir');
 let startServer = require('../index');
+let loadDB = require('../utils/load-db');
 
 before((done) => {
   startServer.then(() => done());
 });
 
-let loadDir = require('./helpers/load-dir');
-
-loadDir(__dirname);
-
-let loadDB = require('../utils/load-db');
-
 after((done) => {
   loadDB.then((db) => {
     db.close();
-    let dbFile = path.join(__dirname, 'test.db');
-    fs.unlink(dbFile, done);
+    fs.unlink(Const.dbPath, done);
   });
 });
 
-module.exports.domain = `http://127.0.0.1:${process.port}`;
+loadDir(__dirname);

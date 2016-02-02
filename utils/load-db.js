@@ -8,11 +8,8 @@ let modelDir = path.join(__dirname, '..', 'models');
 let syncDBdefer = Promise.defer();
 
 let getConnection = () => {
-  let testEnv = process.env.NODE_ENV == 'test';
-  if (testEnv) {
-    let dbPath = path.join(__dirname, '..', 'test', 'test.db');
-    return `sqlite://${dbPath}`;
-  }
+  let testConst = require('../test/test-const');
+  if (process.env.NODE_ENV == testConst.env) return `sqlite://${testConst.dbPath}`;
   let db = require('./config').database;
   return `mysql://${db.username}:${db.password}@${db.host}/${db.database}`;
 }
