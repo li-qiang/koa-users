@@ -33,6 +33,19 @@ module.exports = {
       this.sendErr(Errors.SignupPhoneError);
     },
 
+    function* verifyPasswordSame(next) {
+      let user = this.request.body;
+      if (user && user.password === user.confirmPassword) return yield next;
+      this.sendErr(Errors.SignupPasswordDiff);
+    },
+
+    function* verifyNameExist(next) {
+      let user = this.request.body;
+      let userCount = yield this.models.user.qCount({name: user.name});
+      if (!userCount) return yield next;
+      this.sendErr(Errors.SignupNameExist);
+    },
+
     function* createUser() {
       let user = this.request.body;
       this.body = yield this.models.user.qCreate(user);

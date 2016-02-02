@@ -3,6 +3,7 @@ let expect = require("chai").expect;
 let syncHelper = require('../helpers/sync-helper');
 let itShould = syncHelper.itShould;
 let beforeEachSync = syncHelper.beforeEachSync;
+let afterEachSync = syncHelper.afterEachSync;
 let signupWith = require('../helpers/user-helper').signupWith;
 let loadDB = require('../../utils/load-db');
 let Errors = require('../../utils/error-codes');
@@ -52,6 +53,12 @@ describe("Signup User", () => {
       };
     });
 
+    afterEachSync(function* () {
+      let users = yield models.user.qAll();
+      let promises = users.map((user) => user.qRemove());
+      yield Promise.all(promises);
+    });
+
     itShould('return error code when user name is null', function* () {
       user.name = null;
       res = yield signupWith(user);
@@ -78,6 +85,20 @@ describe("Signup User", () => {
       res = yield signupWith(user);
       expect(res.status).to.equal(401);
       expect(res.body.errCode).to.equal(Errors.SignupPhoneError);
+    });
+
+    itShould('return error code when user confirmPassword is diffrent with password', function* () {
+      user.confirmPassword = 'aaaa';
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupPasswordDiff);
+    });
+
+    itShould('return error code when user name exist', function* () {
+      yield signupWith(user);
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupNameExist);
     });
 
   });
