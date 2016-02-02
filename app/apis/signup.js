@@ -1,18 +1,23 @@
 'use strict'
 
 let koaBody = require('koa-body')();
+let Errors = require('../../utils/error-codes');
 
 module.exports = {
   path: '/users',
   method: 'post',
   actions: [
     koaBody,
-    function* setUser(next) {
-      this.user = this.request.body;
-      yield next;
+    function* varifyUsername(next) {
+      let user = this.request.body;
+      let nameOk = user && user.name && user.name.length > 0;
+      if (nameOk) return yield next;
+      this.sendErr(Errors.SignupNameBlank);
     },
-    function* varifyUsername() {
-      this.body = yield this.models.user.qCreate(this.user);
+
+    function* coreateUser() {
+      let user = this.request.body;
+      this.body = yield this.models.user.qCreate(user);
     }
   ]
 }
