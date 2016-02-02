@@ -29,7 +29,7 @@ let loadModel = (db, file) => {
 
 let syncDB = (db) => {
   db.qSync()
-    .then(() => syncDBdefer.resolve(db.models))
+    .then(() => syncDBdefer.resolve(db))
     .fail((err) => {
       throw err;
     });

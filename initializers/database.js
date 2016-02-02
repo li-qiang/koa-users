@@ -1,9 +1,9 @@
 'use strict'
 let path = require('path');
-let loadModels = require(path.join(__dirname, '..', 'utils', 'load-models'));
+let loadDB = require(path.join(__dirname, '..', 'utils', 'load-db'));
 let models;
 
-loadModels.then((loadedModels) => models = loadedModels);
+loadDB.then((loadedDB) => models = loadedDB.models);
 
 module.exports = function* (next) {
   this.models = models;

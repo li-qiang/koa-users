@@ -6,7 +6,7 @@ let syncHelper = require('../helpers/sync-helper');
 let itShould = syncHelper.itShould;
 let beforeEachSync = syncHelper.beforeEachSync;
 let app = require('../test-helper');
-let loadModels = require('../../utils/load-models');
+let loadDB = require('../../utils/load-db');
 
 describe("Signup User", () => {
 
@@ -32,7 +32,8 @@ describe("Signup User", () => {
 
     beforeEachSync(function* () {
       res = yield signupWith(user);
-      models = yield loadModels;
+      let database = yield loadDB;
+      models = database.models;
     });
 
     itShould("response with a user when post data is ok", function* () {
@@ -42,12 +43,11 @@ describe("Signup User", () => {
     });
 
     itShould('create a user in database', function* () {
-      let foundUser = yield models.user.qOne({email: user.email});
+      let foundUser = yield models.user.qOne({
+        email: user.email
+      });
       expect(foundUser.id).to.be.a('number');
     })
 
   });
-
-
-
 });

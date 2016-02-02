@@ -23,7 +23,7 @@ let server = http.createServer(app.callback());
 
 server.listen(port, () => {
   console.log(`Start Server At ${port}\n`);
-  defer.resolve();
+  defer.resolve(server);
 });
 
 module.exports = defer.promise;
