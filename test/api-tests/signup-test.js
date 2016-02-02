@@ -10,9 +10,9 @@ let Errors = require('../../utils/error-codes');
 
 describe("Signup User", () => {
 
-  let res, user, models;
+  let res, user, models, db;
   beforeEachSync(function* () {
-    let db = yield loadDB;
+    db = yield loadDB;
     models = db.models;
   });
 
@@ -54,11 +54,9 @@ describe("Signup User", () => {
     });
 
     afterEachSync(function* () {
-      let users = yield models.user.qAll();
-      let promises = users.map((user) => user.qRemove());
-      yield Promise.all(promises);
+      yield db.qExecQuery('delete from user;'); // clear user table after each test.
     });
-
+    
     itShould('return error code when user name is null', function* () {
       user.name = null;
       res = yield signupWith(user);
