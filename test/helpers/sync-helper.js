@@ -30,3 +30,7 @@ module.exports.itShould = (describe, generator) => {
 module.exports.beforeEachSync = (generator) => {
   beforeEach((done) => runGenerator(generator, done));
 }
+
+module.exports.afterEachSync = (generator) => {
+  afterEach((done) => runGenerator(generator, done));
+}

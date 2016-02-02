@@ -3,13 +3,20 @@ let expect = require("chai").expect;
 let syncHelper = require('../helpers/sync-helper');
 let itShould = syncHelper.itShould;
 let beforeEachSync = syncHelper.beforeEachSync;
+let afterEachSync = syncHelper.afterEachSync;
 let signupWith = require('../helpers/user-helper').signupWith;
 let loadDB = require('../../utils/load-db');
+let Errors = require('../../utils/error-codes');
 
 describe("Signup User", () => {
 
+  let res, user, models;
+  beforeEachSync(function* () {
+    let db = yield loadDB;
+    models = db.models;
+  });
+
   describe("When post data is ok", () => {
-    let res, models, user;
     beforeEachSync(function* () {
       user = {
         name: 'user',
@@ -19,8 +26,6 @@ describe("Signup User", () => {
         phone: '12345678901'
       };
       res = yield signupWith(user);
-      let db = yield loadDB;
-      models = db.models;
     });
 
     itShould("response with a user when post data is ok", function* () {
@@ -34,6 +39,66 @@ describe("Signup User", () => {
         email: user.email
       });
       expect(foundUser.id).to.be.a('number');
+    });
+  });
+
+  describe("When post data is error", () => {
+    beforeEachSync(function* () {
+      user = {
+        name: 'user',
+        password: 'password',
+        confirmPassword: 'password',
+        email: 'test@test.com',
+        phone: '12345678901'
+      };
+    });
+
+    afterEachSync(function* () {
+      let users = yield models.user.qAll();
+      let promises = users.map((user) => user.qRemove());
+      yield Promise.all(promises);
+    });
+
+    itShould('return error code when user name is null', function* () {
+      user.name = null;
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupNameBlank);
+    });
+
+    itShould('return error code when user password is null', function* () {
+      user.password = null;
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupPasswordBlank);
+    });
+
+    itShould('return error code when user email is error', function* () {
+      user.email = '';
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupEmailError);
+    });
+
+    itShould('return error code when user phone is error', function* () {
+      user.phone = '11';
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupPhoneError);
+    });
+
+    itShould('return error code when user confirmPassword is diffrent with password', function* () {
+      user.confirmPassword = 'aaaa';
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupPasswordDiff);
+    });
+
+    itShould('return error code when user name exist', function* () {
+      yield signupWith(user);
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupNameExist);
     });
 
   });
