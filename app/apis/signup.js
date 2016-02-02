@@ -2,7 +2,7 @@
 
 let koaBody = require('koa-body')();
 let Errors = require('../../utils/error-codes');
-let is = require('../../utils/is');
+let is = require('is_js');
 
 module.exports = {
   path: '/users',
@@ -21,7 +21,19 @@ module.exports = {
       this.sendErr(Errors.SignupPasswordBlank);
     },
 
-    function* coreateUser() {
+    function* varifyUserEmail(next) {
+      let user = this.request.body;
+      if (user && is.email(user.email)) return yield next;
+      this.sendErr(Errors.SignupEmailError);
+    },
+
+    function* varifyUserPhone(next) {
+      let user = this.request.body;
+      if (user && is.phoneNumber(user.phone)) return yield next;
+      this.sendErr(Errors.SignupPhoneError);
+    },
+
+    function* createUser() {
       let user = this.request.body;
       this.body = yield this.models.user.qCreate(user);
     }

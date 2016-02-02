@@ -16,7 +16,8 @@ fs.readdirSync(initializersDir)
   .filter((file) => /\.js$/.test(file))
   .forEach((file) => {
     let filePath = path.join(initializersDir, file);
-    router.use(require(filePath));
+    let middleware = require(filePath);
+    if (middleware) router.use(middleware);
   });
 
 let server = http.createServer(app.callback());

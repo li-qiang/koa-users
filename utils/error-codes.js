@@ -2,6 +2,6 @@
 module.exports = {
   SignupNameBlank: 10001,
   SignupPasswordBlank: 10002,
-  SignupEmailBlank: 10003,
-  SignupPhoneBlank: 10004
+  SignupEmailError: 10003,
+  SignupPhoneError: 10004
 }

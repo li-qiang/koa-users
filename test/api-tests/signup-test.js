@@ -59,11 +59,25 @@ describe("Signup User", () => {
       expect(res.body.errCode).to.equal(Errors.SignupNameBlank);
     });
 
-    itShould('return error code 10001 when user name is null', function* () {
+    itShould('return error code when user password is null', function* () {
       user.password = null;
       res = yield signupWith(user);
       expect(res.status).to.equal(401);
       expect(res.body.errCode).to.equal(Errors.SignupPasswordBlank);
+    });
+
+    itShould('return error code when user email is error', function* () {
+      user.email = '';
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupEmailError);
+    });
+
+    itShould('return error code when user email is error', function* () {
+      user.phone = '11';
+      res = yield signupWith(user);
+      expect(res.status).to.equal(401);
+      expect(res.body.errCode).to.equal(Errors.SignupPhoneError);
     });
 
   });
