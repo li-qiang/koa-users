@@ -13,6 +13,7 @@ describe("Signup User", () => {
   let res, user, models, db;
   beforeEachSync(function* () {
     db = yield loadDB;
+    yield db.qExecQuery('delete from user;');
     models = db.models;
   });
 
@@ -53,10 +54,6 @@ describe("Signup User", () => {
       };
     });
 
-    afterEachSync(function* () {
-      yield db.qExecQuery('delete from user;'); // clear user table after each test.
-    });
-    
     itShould('return error code when user name is null', function* () {
       user.name = null;
       res = yield signupWith(user);
