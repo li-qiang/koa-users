@@ -32,6 +32,9 @@ describe("Signin User", () => {
       expect(res.body.user).to.include(user);
     });
 
+    itShould('set cookie', function* () {
+      expect(res.headers['set-cookie']).to.be.ok;
+    });
   });
 
   describe("When post data is error", () => {

@@ -21,8 +21,9 @@ module.exports = {
         email: this.userEmail,
         password: this.userPassword
       });
-      if (user) return this.body = {user};
-      this.sendErr(Errors.SigninPasswordError);
+      if (!user) return this.sendErr(Errors.SigninPasswordError);
+      this.body = {user};
+      this.session.userId = user.id;
     }
   ]
 }

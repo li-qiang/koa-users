@@ -3,8 +3,8 @@ let expect = require("chai").expect;
 let Agent = require('superagent').agent;
 let Const = require('../test-const');
 
-module.exports.signupWith = (user) => {
-  let agent = new Agent();
+module.exports.signupWith = (user, agent) => {
+  agent = agent || new Agent();
   let defer = Promise.defer();
   agent.post(`${Const.host}/users`)
     .send({user})
@@ -14,9 +14,9 @@ module.exports.signupWith = (user) => {
   return defer.promise;
 }
 
-module.exports.signinWith = (user) => {
+module.exports.signinWith = (user, agent) => {
+  agent = agent || new Agent();
   let defer = Promise.defer();
-  let agent = new Agent();
   agent.post(`${Const.host}/users/session`)
     .send({user})
     .end((err, res) => {
