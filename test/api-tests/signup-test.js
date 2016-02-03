@@ -90,11 +90,11 @@ describe("Signup User", () => {
       expect(res.body.errCode).to.equal(Errors.SignupPasswordDiff);
     });
 
-    itShould('return error code when user name exist', function* () {
+    itShould('return error code when user email exist', function* () {
       yield signupWith(user);
       res = yield signupWith(user);
       expect(res.status).to.equal(401);
-      expect(res.body.errCode).to.equal(Errors.SignupNameExist);
+      expect(res.body.errCode).to.equal(Errors.SignupEmailExist);
     });
 
   });

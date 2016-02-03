@@ -35,10 +35,10 @@ module.exports = {
       this.sendErr(Errors.SignupPasswordDiff);
     },
 
-    function* verifyNameExist(next) {
-      let userCount = yield this.models.user.qCount({name: this.user.name});
+    function* verifyEmailExist(next) {
+      let userCount = yield this.models.user.qCount({email: this.user.email});
       if (!userCount) return yield next;
-      this.sendErr(Errors.SignupNameExist);
+      this.sendErr(Errors.SignupEmailExist);
     },
 
     function* createUser() {
