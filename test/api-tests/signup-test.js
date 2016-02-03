@@ -13,6 +13,7 @@ describe("Signup User", () => {
   let res, user, models, db;
   beforeEachSync(function* () {
     db = yield loadDB;
+    yield db.qExecQuery('delete from user;');
     models = db.models;
   });
 
@@ -29,9 +30,9 @@ describe("Signup User", () => {
     });
 
     itShould("response with a user when post data is ok", function* () {
-      expect(res.body.name).to.equal(user.name);
-      expect(res.body.email).to.equal(user.email);
-      expect(res.body.phone).to.equal(user.phone);
+      expect(res.body.user.name).to.equal(user.name);
+      expect(res.body.user.email).to.equal(user.email);
+      expect(res.body.user.phone).to.equal(user.phone);
     });
 
     itShould('create a user in database', function* () {
@@ -39,6 +40,7 @@ describe("Signup User", () => {
         email: user.email
       });
       expect(foundUser.id).to.be.a('number');
+      expect(foundUser.name).to.equal(user.name);
     });
   });
 
@@ -53,10 +55,6 @@ describe("Signup User", () => {
       };
     });
 
-    afterEachSync(function* () {
-      yield db.qExecQuery('delete from user;'); // clear user table after each test.
-    });
-    
     itShould('return error code when user name is null', function* () {
       user.name = null;
       res = yield signupWith(user);

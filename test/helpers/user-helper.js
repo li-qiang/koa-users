@@ -1,15 +1,23 @@
 'use strict'
 let expect = require("chai").expect;
 let Agent = require('superagent').agent;
-let agent = new Agent();
 let Const = require('../test-const');
 
-module.exports.signupWith = (data) => {
+let post = (url, data, agent) => {
+  agent = agent || new Agent();
   let defer = Promise.defer();
-  agent.post(`${Const.host}/users`)
-    .send(data)
+  agent.post(url)
+    .send({user: data})
     .end((err, res) => {
       defer.resolve(res);
     });
   return defer.promise;
+}
+
+module.exports.signupWith = (user, agent) => {
+  return post(`${Const.host}/users`, user, agent);
+}
+
+module.exports.signinWith = (user, agent) => {
+  return post(`${Const.host}/users/session`, user, agent);
 }

@@ -9,7 +9,6 @@ let port = process.port || 8080;
 let defer = Promise.defer();
 let app = koa();
 
-app.use(router.routes());
 
 let initializersDir = path.join(__dirname, 'initializers');
 fs.readdirSync(initializersDir)
@@ -17,8 +16,12 @@ fs.readdirSync(initializersDir)
   .forEach((file) => {
     let filePath = path.join(initializersDir, file);
     let middleware = require(filePath);
-    if (middleware) router.use(middleware);
+    if (!middleware) return;
+    let isGenerator = middleware.constructor.name == 'GeneratorFunction';
+    isGenerator ? router.use(middleware) : middleware(app);
   });
+
+app.use(router.routes());
 
 let server = http.createServer(app.callback());
 
