@@ -30,9 +30,9 @@ describe("Signup User", () => {
     });
 
     itShould("response with a user when post data is ok", function* () {
-      expect(res.body.name).to.equal(user.name);
-      expect(res.body.email).to.equal(user.email);
-      expect(res.body.phone).to.equal(user.phone);
+      expect(res.body.user.name).to.equal(user.name);
+      expect(res.body.user.email).to.equal(user.email);
+      expect(res.body.user.phone).to.equal(user.phone);
     });
 
     itShould('create a user in database', function* () {
@@ -40,6 +40,7 @@ describe("Signup User", () => {
         email: user.email
       });
       expect(foundUser.id).to.be.a('number');
+      expect(foundUser.name).to.equal(user.name);
     });
   });
 

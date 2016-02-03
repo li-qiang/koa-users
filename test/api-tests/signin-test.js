@@ -32,10 +32,6 @@ describe("Signin User", () => {
       expect(res.body.user).to.include(user);
     });
 
-    // itShould('return user', function* () {
-    //   expect(res.body.user).to.include(user);
-    // });
-
   });
 
   describe("When post data is error", () => {

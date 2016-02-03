@@ -3,11 +3,11 @@ let expect = require("chai").expect;
 let Agent = require('superagent').agent;
 let Const = require('../test-const');
 
-module.exports.signupWith = (data) => {
+module.exports.signupWith = (user) => {
   let agent = new Agent();
   let defer = Promise.defer();
   agent.post(`${Const.host}/users`)
-    .send(data)
+    .send({user})
     .end((err, res) => {
       defer.resolve(res);
     });

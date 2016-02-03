@@ -10,45 +10,40 @@ module.exports = {
   actions: [
     koaBody,
     function* varifyUsername(next) {
-      let user = this.request.body;
-      if (user && is.present(user.name)) return yield next;
+      this.user = this.request.body.user;
+      if (this.user && is.present(this.user.name)) return yield next;
       this.sendErr(Errors.SignupNameBlank);
     },
 
     function* varifyUserPassword(next) {
-      let user = this.request.body;
-      if (user && is.present(user.password)) return yield next;
+      if (is.present(this.user.password)) return yield next;
       this.sendErr(Errors.SignupPasswordBlank);
     },
 
     function* varifyUserEmail(next) {
-      let user = this.request.body;
-      if (user && is.email(user.email)) return yield next;
+      if (is.email(this.user.email)) return yield next;
       this.sendErr(Errors.SignupEmailError);
     },
 
     function* varifyUserPhone(next) {
-      let user = this.request.body;
-      if (user && is.phoneNumber(user.phone)) return yield next;
+      if (is.phoneNumber(this.user.phone)) return yield next;
       this.sendErr(Errors.SignupPhoneError);
     },
 
     function* verifyPasswordSame(next) {
-      let user = this.request.body;
-      if (user && user.password === user.confirmPassword) return yield next;
+      if (this.user.password === this.user.confirmPassword) return yield next;
       this.sendErr(Errors.SignupPasswordDiff);
     },
 
     function* verifyNameExist(next) {
-      let user = this.request.body;
-      let userCount = yield this.models.user.qCount({name: user.name});
+      let userCount = yield this.models.user.qCount({name: this.user.name});
       if (!userCount) return yield next;
       this.sendErr(Errors.SignupNameExist);
     },
 
     function* createUser() {
-      let user = this.request.body;
-      this.body = yield this.models.user.qCreate(user);
+      let user = yield this.models.user.qCreate(this.user);
+      this.body = {user};
     }
   ]
 }
