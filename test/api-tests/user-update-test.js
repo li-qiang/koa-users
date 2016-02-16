@@ -11,7 +11,7 @@ let Agent = require('superagent').agent;
 
 let userHelper = require('../helpers/user-helper');
 
-describe("Update User", () => {
+describe("User Update", () => {
 
   let res, user, models, db,
     agent = new Agent(),
@@ -63,7 +63,7 @@ describe("Update User", () => {
       updatedEmail = 'updatedUserEmail',
       updatedPhone = '12332112312';
 
-    beforeEachSync(function* () {
+    itShould("response email error", function* () {
       let signupRes = yield userHelper.signupWith(preparedUser, agent);
       user = signupRes.body.user;
       res = yield userHelper.update(user.id, {
@@ -71,10 +71,42 @@ describe("Update User", () => {
         email: updatedEmail,
         phone: updatedPhone
       });
-    });
-
-    itShould("response email error", function* () {
       expect(res.body.errCode).to.equal(Errors.EmailErrorWhenUpdateUser);
     });
   });
+
+  describe("When name is blank", () => {
+    let updatedName = '',
+      updatedEmail = 'updatedUserEmail@163.com',
+      updatedPhone = '12332112312';
+
+    itShould("response email error", function* () {
+      let signupRes = yield userHelper.signupWith(preparedUser, agent);
+      user = signupRes.body.user;
+      res = yield userHelper.update(user.id, {
+        name: updatedName,
+        email: updatedEmail,
+        phone: updatedPhone
+      });
+      expect(res.body.errCode).to.equal(Errors.NameBlankWhenUpdateUser);
+    });
+  });
+
+  describe("When phone is error", () => {
+    let updatedName = 'updatedName',
+      updatedEmail = 'updatedUserEmail@163.com',
+      updatedPhone = 'updatedPhone';
+
+    itShould("response email error", function* () {
+      let signupRes = yield userHelper.signupWith(preparedUser, agent);
+      user = signupRes.body.user;
+      res = yield userHelper.update(user.id, {
+        name: updatedName,
+        email: updatedEmail,
+        phone: updatedPhone
+      });
+      expect(res.body.errCode).to.equal(Errors.PhoneErrorWhenUpdateUser);
+    });
+  });
+
 });
