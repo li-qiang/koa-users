@@ -44,7 +44,7 @@ describe("Update User", () => {
       });
     });
 
-    itShould("response with a user when post data is ok", function* () {
+    itShould("response with a user", function* () {
       expect(res.body.user.name).to.equal(updatedName);
       expect(res.body.user.email).to.equal(updatedEmail);
       expect(res.body.user.phone).to.equal(updatedPhone);
@@ -55,6 +55,26 @@ describe("Update User", () => {
       expect(savedUser).to.be.ok;
       expect(savedUser.name).to.equal(updatedName);
       expect(savedUser.phone).to.equal(updatedPhone);
+    });
+  });
+
+  describe("When email is error", () => {
+    let updatedName = 'updatedUserName',
+      updatedEmail = 'updatedUserEmail',
+      updatedPhone = '12332112312';
+
+    beforeEachSync(function* () {
+      let signupRes = yield userHelper.signupWith(preparedUser, agent);
+      user = signupRes.body.user;
+      res = yield userHelper.update(user.id, {
+        name: updatedName,
+        email: updatedEmail,
+        phone: updatedPhone
+      });
+    });
+
+    itShould("response email error", function* () {
+      expect(res.body.errCode).to.equal(Errors.EmailErrorWhenUpdateUser);
     });
   });
 });
