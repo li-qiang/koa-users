@@ -15,7 +15,7 @@ let runGenerator = (g, done) => {
       // immediate value: just send right back in
       else {
         // avoid synchronous recursion
-        iterate(ret.value);
+        setTimeout(() => iterate(ret.value));
       }
     } else {
       done();

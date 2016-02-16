@@ -7,5 +7,8 @@ module.exports = {
   SignupEmailExist: 10011,
   SignupPasswordDiff: 10012,
   SigninEmailError: 10021,
-  SigninPasswordError: 10022
+  SigninPasswordError: 10022,
+  NameBlankWhenUpdateUser: 10030,
+  EmailErrorWhenUpdateUser: 10031,
+  PhoneErrorWhenUpdateUser: 10032
 }

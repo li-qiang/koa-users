@@ -1,7 +1,8 @@
 'use strict'
+let is = require('is_js');
 let koaBody = require('koa-body')();
 let Errors = require('../../utils/error-codes');
-let is = require('is_js');
+let eventEmitter = require('../event-emitter');
 
 module.exports = {
   path: '/users/session',
@@ -24,6 +25,7 @@ module.exports = {
       if (!user) return this.sendErr(Errors.SigninPasswordError);
       this.body = {user};
       this.session.userId = user.id;
+      eventEmitter.emit('signin', user);
     }
   ]
 }
