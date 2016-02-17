@@ -1,5 +1,6 @@
 'use strict'
 module.exports = {
+  NoAccess: 40000,
   SignupNameBlank: 10001,
   SignupPasswordBlank: 10002,
   SignupEmailError: 10003,

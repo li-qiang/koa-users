@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "locus": "^1.2.0",
     "sqlite": "0.0.4",
     "superagent": "^1.7.2"
   }
