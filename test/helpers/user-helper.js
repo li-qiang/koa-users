@@ -1,18 +1,18 @@
-'use strict'
+'use strict';
 let expect = require("chai").expect;
 let Agent = require('superagent').agent;
 let Const = require('../test-const');
-
+let Promise = require('bluebird');
 let request = (method, url, data, agent) => {
   agent = agent || Agent();
   let defer = Promise.defer();
   agent[method](url)
-    .send({user: data})
-    .end((err, res) => {
-      defer.resolve(res);
-    });
+      .send({user: data})
+      .end((err, res) => {
+        defer.resolve(res);
+      });
   return defer.promise;
-}
+};
 
 let helpers = {
   signupWith(user, agent) {
@@ -38,6 +38,6 @@ let helpers = {
   update(userId, user, agent) {
     return request('put', `${Const.host}/users/${userId}`, user, agent);
   }
-}
+};
 
 module.exports = helpers;

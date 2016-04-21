@@ -1,9 +1,11 @@
-'use strict'
+'use strict';
 
-module.exports = function* (next) {
-  this.sendErr = (errCode) => {
-    this.status = 401;
-    this.body = {errCode}
-  };
-  yield next;
-}
+module.exports = () => {
+    return async function (cxt, next) {
+        cxt.sendErr = (errCode) => {
+            cxt.status = 401;
+            cxt.body = {errCode}
+        };
+        await next();
+    }
+};

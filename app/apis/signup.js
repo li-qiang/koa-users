@@ -1,50 +1,48 @@
-'use strict'
-let koaBody = require('koa-body')();
+'use strict';
 let Errors = require('../../utils/error-codes');
 let eventEmitter = require('../event-emitter');
 let is = require('is_js');
 
 module.exports = {
-  path: '/users',
-  method: 'post',
-  actions: [
-    koaBody,
-    function* varifyUsername(next) {
-      this.user = this.request.body.user;
-      if (this.user && is.present(this.user.name)) return yield next;
-      this.sendErr(Errors.SignupNameBlank);
-    },
+    path: '/users',
+    method: 'post',
+    actions: [
+        (async function varifyUsername(ctx, next) {
+            ctx.user = ctx.request.body.user;
+            if (ctx.user && is.present(ctx.user.name)) return await next();
+            ctx.sendErr(Errors.SignupNameBlank);
+        }),
 
-    function* varifyUserPassword(next) {
-      if (is.present(this.user.password)) return yield next;
-      this.sendErr(Errors.SignupPasswordBlank);
-    },
+        async function varifyUserPassword(ctx, next) {
+            if (is.present(ctx.user.password)) return await next();
+            ctx.sendErr(Errors.SignupPasswordBlank);
+        },
 
-    function* varifyUserEmail(next) {
-      if (is.email(this.user.email)) return yield next;
-      this.sendErr(Errors.SignupEmailError);
-    },
+        async function varifyUserEmail(ctx, next) {
+            if (is.email(ctx.user.email)) return await next();
+            ctx.sendErr(Errors.SignupEmailError);
+        },
 
-    function* varifyUserPhone(next) {
-      if (is.phoneNumber(this.user.phone)) return yield next;
-      this.sendErr(Errors.SignupPhoneError);
-    },
+        async function varifyUserPhone(ctx, next) {
+            if (is.phoneNumber(ctx.user.phone)) return await next();
+            ctx.sendErr(Errors.SignupPhoneError);
+        },
 
-    function* verifyPasswordSame(next) {
-      if (this.user.password === this.user.confirmPassword) return yield next;
-      this.sendErr(Errors.SignupPasswordDiff);
-    },
+        async function verifyPasswordSame(ctx, next) {
+            if (ctx.user.password === ctx.user.confirmPassword) return await next();
+            ctx.sendErr(Errors.SignupPasswordDiff);
+        },
 
-    function* verifyEmailExist(next) {
-      let userCount = yield this.models.user.qCount({email: this.user.email});
-      if (!userCount) return yield next;
-      this.sendErr(Errors.SignupEmailExist);
-    },
+        async function verifyEmailExist(ctx, next) {
+            let userCount = await ctx.models.user.qCount({email: ctx.user.email});
+            if (!userCount) return await next();
+            ctx.sendErr(Errors.SignupEmailExist);
+        },
 
-    function* createUser() {
-      let user = yield this.models.user.qCreate(this.user);
-      this.body = {user};
-      eventEmitter.emit('signup', user);
-    }
-  ]
-}
+        async function createUser(ctx) {
+            let user = await ctx.models.user.qCreate(ctx.user);
+            ctx.body = {user};
+            eventEmitter.emit('signup', user);
+        }
+    ]
+};
