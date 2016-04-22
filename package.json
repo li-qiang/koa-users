@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "co": "^4.6.0",
     "sqlite": "0.0.4",
     "superagent": "^1.7.2"
   }
