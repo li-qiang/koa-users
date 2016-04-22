@@ -27,8 +27,7 @@ fs.readdirSync(initializersDir)
     .forEach((file) => {
         let filePath = path.join(initializersDir, file);
         let middleware = require(filePath);
-        if (!middleware) return;
-        app.use(middleware());
+        if (middleware) app.use(middleware());
     });
 
 app.use(router.routes());

@@ -7,11 +7,11 @@ module.exports = {
     path: '/users',
     method: 'post',
     actions: [
-        (async function varifyUsername(ctx, next) {
+        async function varifyUsername(ctx, next) {
             ctx.user = ctx.request.body.user;
             if (ctx.user && is.present(ctx.user.name)) return await next();
             ctx.sendErr(Errors.SignupNameBlank);
-        }),
+        },
 
         async function varifyUserPassword(ctx, next) {
             if (is.present(ctx.user.password)) return await next();
