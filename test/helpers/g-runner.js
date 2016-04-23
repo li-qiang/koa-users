@@ -3,5 +3,5 @@
 var co = require('co');
 
 module.exports = (gen) => {
-    return (done) => co(gen).then(done);
+    return (done) => co(gen).then(done, done);
 };

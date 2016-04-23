@@ -1,24 +1,30 @@
 'use strict';
 
 let fs = require('fs');
-let path = require('path');
 let Const = require('./test-const');
+
 process.port = Const.appPort;
 process.env.NODE_ENV = Const.env;
 
-let loadDir = require('./helpers/load-dir');
+
 let startServer = require('../index');
 let loadDB = require('../utils/load-db');
+let gRunner = require('./helpers/g-runner');
 
-before((done) => {
-  startServer.then(() => done());
-});
+let bluebird = require('bluebird');
 
-after((done) => {
-  loadDB.then((db) => {
+let removeTestDB = () => {
+    let defer = bluebird.defer();
+    fs.unlink(Const.dbPath, () => defer.resolve());
+    return defer.promise;
+};
+
+before(gRunner(function *() {
+    yield startServer;
+}));
+
+after(gRunner(function *() {
+    let db = yield loadDB;
     db.close();
-    fs.unlink(Const.dbPath, done);
-  });
-});
-
-loadDir(__dirname);
+    yield removeTestDB();
+}));

@@ -1,11 +1,11 @@
 'use strict'
 module.exports = {
-  SignupNameBlank: 10001,
-  SignupPasswordBlank: 10002,
-  SignupEmailError: 10003,
-  SignupPhoneError: 10004,
-  SignupEmailExist: 10011,
-  SignupPasswordDiff: 10012,
-  SigninEmailError: 10021,
-  SigninPasswordError: 10022
-}
+    InvalidUser: 'Invalid User',
+    InvalidEmail: 'Invalid Email',
+    InvalidPhone: 'Invalid Phone',
+    InvalidPassword: 'Invalid Password',
+    InvalidConfirmPassword: 'Invalid Confirm Password',
+    EmailExist: 'Email Exist',
+    InvalidName: 'Invalid Name',
+    NoAccess: 'NoAccess'
+};

@@ -4,6 +4,7 @@ let gRunner = require('../helpers/g-runner');
 let signupWith = require('../helpers/user-helper').signupWith;
 let loadDB = require('../../utils/load-db');
 let Errors = require('../../utils/error-codes');
+let expectResponse = require('../helpers/expect-response');
 
 describe("Signup User", () => {
 
@@ -56,43 +57,37 @@ describe("Signup User", () => {
         it('return error code when user name is null', gRunner(function*() {
             user.name = null;
             res = yield signupWith(user);
-            expect(res.status).to.equal(401);
-            expect(res.body.errCode).to.equal(Errors.SignupNameBlank);
+            expectResponse(res).toBeErrorWithMessage(Errors.InvalidName);
         }));
 
         it('return error code when user password is null', gRunner(function*() {
             user.password = null;
             res = yield signupWith(user);
-            expect(res.status).to.equal(401);
-            expect(res.body.errCode).to.equal(Errors.SignupPasswordBlank);
+            expectResponse(res).toBeErrorWithMessage(Errors.InvalidPassword);
         }));
 
         it('return error code when user email is error', gRunner(function*() {
             user.email = '';
             res = yield signupWith(user);
-            expect(res.status).to.equal(401);
-            expect(res.body.errCode).to.equal(Errors.SignupEmailError);
+            expectResponse(res).toBeErrorWithMessage(Errors.InvalidEmail);
         }));
 
         it('return error code when user phone is error', gRunner(function*() {
             user.phone = '11';
             res = yield signupWith(user);
-            expect(res.status).to.equal(401);
-            expect(res.body.errCode).to.equal(Errors.SignupPhoneError);
+            expectResponse(res).toBeErrorWithMessage(Errors.InvalidPhone);
         }));
 
         it('return error code when user confirmPassword is diffrent with password', gRunner(function*() {
             user.confirmPassword = 'aaaa';
             res = yield signupWith(user);
-            expect(res.status).to.equal(401);
-            expect(res.body.errCode).to.equal(Errors.SignupPasswordDiff);
+            expectResponse(res).toBeErrorWithMessage(Errors.InvalidConfirmPassword);
         }));
 
         it('return error code when user email exist', gRunner(function*() {
             yield signupWith(user);
             res = yield signupWith(user);
-            expect(res.status).to.equal(401);
-            expect(res.body.errCode).to.equal(Errors.SignupEmailExist);
+            expectResponse(res).toBeErrorWithMessage(Errors.EmailExist);
         }));
 
     });

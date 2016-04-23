@@ -1,29 +1,25 @@
-'use strict'
-let koaBody = require('koa-body')();
+'use strict';
+
 let Errors = require('../../utils/error-codes');
-let is = require('is_js');
+let eventEmitter = require('../event-emitter');
 
 module.exports = {
-  path: '/users/session',
-  method: 'post',
-  actions: [
-    koaBody,
-    function* verifyNameExist(next) {
-      this.userEmail = this.request.body.user.email;
-      this.userPassword = this.request.body.user.password;
-      let userCount = yield this.models.user.qCount({email: this.userEmail});
-      if (userCount) return yield next;
-      this.sendErr(Errors.SigninEmailError);
-    },
+    path: '/users/session',
+    method: 'post',
+    actions: [
+        async function (ctx, next) {
+            if(ctx.currentUser) return await next();
+            ctx.sendErr(Errors.InvalidUser);
+        },
 
-    function* getUser() {
-      let user = yield this.models.user.qOne({
-        email: this.userEmail,
-        password: this.userPassword
-      });
-      if (!user) return this.sendErr(Errors.SigninPasswordError);
-      this.body = {user};
-      this.session.userId = user.id;
-    }
-  ]
-}
+        async function (ctx) {
+            let user = await ctx.models.user.qOne({
+                email: ctx.currentUser.email,
+                password: ctx.currentUser.password
+            });
+            if (!user) return ctx.sendErr(Errors.InvalidUser);
+            ctx.body = {user};
+            eventEmitter.emit('signin', user);
+        }
+    ]
+};
