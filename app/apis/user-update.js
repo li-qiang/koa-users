@@ -1,52 +1,55 @@
 'use strict'
-let koaBody = require('koa-body')();
+
 let orm = require('orm');
 let Errors = require('../../utils/error-codes');
 let eventEmitter = require('../event-emitter');
 let is = require('is_js');
 
 module.exports = {
-  path: '/users/:userId',
-  method: 'put',
-  actions: [
-    function* AuthUser(next) {
-      let hasAccess = this.session.userId == this.params.userId;
-      if (hasAccess) return yield next;
-      this.sendErr(Errors.NoAccess);
-    },
+    path: '/users/:userId',
+    method: 'put',
+    actions: [
+        async function (ctx, next) {
+            if(ctx.currentUser) return await next();
+            ctx.sendErr(Errors.NoAccess);
+        },
 
-    koaBody,
+        async function (ctx, next) {
+            let hasAccess = ctx.currentUser.id == ctx.params.userId;
+            if (hasAccess) return await next();
+            ctx.sendErr(Errors.NoAccess);
+        },
 
-    function* varifyUsername(next) {
-      this.user = this.request.body.user;
-      if (this.user && is.present(this.user.name)) return yield next;
-      this.sendErr(Errors.NameBlankWhenUpdateUser);
-    },
+        async function (ctx, next) {
+            ctx.user = ctx.request.body.user;
+            if (ctx.user && is.present(ctx.user.name)) return await next();
+            ctx.sendErr(Errors.InvalidName);
+        },
 
-    function* varifyUserEmail(next) {
-      if (is.email(this.user.email)) return yield next;
-      this.sendErr(Errors.EmailErrorWhenUpdateUser);
-    },
+        async function (ctx, next) {
+            if (is.email(ctx.user.email)) return await next();
+            ctx.sendErr(Errors.InvalidEmail);
+        },
 
-    function* varifyUserPhone(next) {
-      if (is.phoneNumber(this.user.phone)) return yield next;
-      this.sendErr(Errors.PhoneErrorWhenUpdateUser);
-    },
+        async function (ctx, next) {
+            if (is.phoneNumber(ctx.user.phone)) return await next();
+            ctx.sendErr(Errors.InvalidPhone);
+        },
 
-    function* verifyEmailExist(next) {
-      let userCount = yield this.models.user.qCount({
-        email: this.user.email,
-        id: orm.ne(this.params.id)
-      });
-      if (!userCount) return yield next;
-      this.sendErr(Errors.EmailErrorWhenUpdateUser);
-    },
+        async function (ctx, next) {
+            let userCount = await ctx.models.user.qCount({
+                email: ctx.user.email,
+                id: orm.ne(ctx.params.id)
+            });
+            if (!userCount) return await next();
+            ctx.sendErr(Errors.EmailExist);
+        },
 
-    function* createUser() {
-      let user = yield this.models.user.qGet(this.params.userId);
-      let updatedUser = yield user.qSave(this.user);
-      this.body = {user: updatedUser};
-      eventEmitter.emit('signup', user);
-    }
-  ]
-}
+        async function (ctx) {
+            let user = await ctx.models.user.qGet(ctx.params.userId);
+            let updatedUser = await user.qSave(ctx.user);
+            ctx.body = {user: updatedUser};
+            eventEmitter.emit('signup', user);
+        }
+    ]
+};

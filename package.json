@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node index.js",
-    "test": "mocha --compilers js:babel-core/register"
+    "test": "mocha ./test --compilers js:babel-core/register --recursive"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/li-qiang/koa-users#readme",
   "dependencies": {
+    "basic-auth": "^1.0.3",
     "bluebird": "^3.3.5",
     "is_js": "^0.8.0",
     "koa": "^2.0.0",
@@ -28,7 +29,8 @@
     "koa-router": "^7.0.0",
     "mysql": "^2.10.2",
     "orm": "^2.1.30",
-    "q-orm": "0.0.3"
+    "q-orm": "0.0.3",
+    "redis": "^2.6.0-1"
   },
   "devDependencies": {
     "babel-plugin-transform-async-functions": "^6.5.0",

@@ -21,14 +21,12 @@ app.use(bodyParser());
 
 // Initializers
 
-let initializersDir = path.join(__dirname, 'initializers');
-fs.readdirSync(initializersDir)
-    .filter((file) => /\.js$/.test(file))
-    .forEach((file) => {
-        let filePath = path.join(initializersDir, file);
-        let middleware = require(filePath);
-        if (middleware) app.use(middleware());
-    });
+['is', 'error-handler', 'database', 'basic-auth'].map(fileName => {
+    let filePath = path.join(__dirname, 'initializers', fileName);
+    let middleware = require(filePath);
+    if (middleware) app.use(middleware());
+});
+
 
 app.use(router.routes());
 

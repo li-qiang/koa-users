@@ -3,41 +3,43 @@
 let Agent = require('superagent').agent;
 let Const = require('../test-const');
 let Promise = require('bluebird');
-let request = (method, url, data, agent) => {
-    agent = agent || Agent();
+
+let request = (method, url, data, client) => {
+    let agent = client ? client.agent((agent) => agent[method](url)) : Agent()[method](url);
     let defer = Promise.defer();
-    agent[method](url)
-        .send({user: data})
-        .end((err, res) => {
-            defer.resolve(res);
-        });
+    agent.send({user: data})
+        .end((err, res) => defer.resolve(res));
     return defer.promise;
 };
 
-let helpers = {
-    signupWith(user, agent) {
-        return request('post', `${Const.host}/users`, user, agent);
-    },
-
-    signinWith(user, agent) {
-        return request('post', `${Const.host}/users/session`, user, agent);
-    },
-
-    initAndSignin(user, agent) {
-        let defer = Promise.defer();
-        helpers.signupWith(user, agent).then((res) => {
-            let registerUser = res.body.user;
-            helpers.signinWith({
-                email: registerUser.email,
-                password: registerUser.password
-            }, agent).then((res) => defer.resolve(registerUser));
-        });
-        return defer.promise;
-    },
-
-    update(userId, user, agent) {
-        return request('put', `${Const.host}/users/${userId}`, user, agent);
-    }
+let userJson = {
+    name: 'user',
+    password: 'password',
+    confirmPassword: 'password',
+    email: 'test@test.com',
+    phone: '12345678901'
 };
 
-module.exports = helpers;
+let signupWith = (user, client) => {
+    return request('post', `${Const.host}/users`, user, client);
+};
+
+
+let signinWith = (user, client) => {
+    return request('post', `${Const.host}/users/session`, user, client);
+};
+
+let userUpdate = (userId, user, client) => {
+    return request('put', `${Const.host}/users/${userId}`, user, client);
+};
+
+
+module.exports = {
+    signupWith,
+    signinWith,
+    userUpdate,
+    createUser(options = {}) {
+        let user = Object.assign({}, userJson, options);
+        return signupWith(user).then(res => res.body.user);
+    }
+};

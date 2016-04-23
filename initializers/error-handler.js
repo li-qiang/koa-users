@@ -2,9 +2,9 @@
 
 module.exports = () => {
     return async function (cxt, next) {
-        cxt.sendErr = (errCode) => {
-            cxt.status = 401;
-            cxt.body = {errCode}
+        cxt.sendErr = (errmsg) => {
+            cxt.status = 200;
+            cxt.body = {error: 1, errorMsg: errmsg};
         };
         await next();
     }

@@ -5,7 +5,7 @@ let models;
 
 loadDB.then((loadedDB) => models = loadedDB.models);
 
-module.exports = (next) => {
+module.exports = () => {
     return async function (ctx, next) {
         ctx.models = models;
         await next();
