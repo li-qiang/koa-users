@@ -1,7 +1,7 @@
 'use strict';
 let fs = require('fs');
 let path = require('path');
-let orm = require('orm');
+
 let Promise = require('bluebird');
 let qOrm = require('q-orm');
 let modelDir = path.join(__dirname, '..', 'models');
@@ -38,8 +38,9 @@ let loadAllModel = (db) => {
         if (err) throw err;
         let promises = files.filter((file) => /\.js/.test)
             .map((file) => loadModel(db, file));
-        Promise.all(promises).then(() => syncDB(db));
+        Promise.all(promises).then(() => syncDB(db)).then(() => defer.resolve());
     });
+    return defer.promise;
 };
 
 qOrm.qConnect(getConnection()).then(loadAllModel);
